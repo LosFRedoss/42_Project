@@ -6,15 +6,19 @@
 /*   By: tmimault <tmimault@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/15 20:43:52 by tmimault          #+#    #+#             */
-/*   Updated: 2024/01/17 17:38:54 by tmimault         ###   ########.fr       */
+/*   Updated: 2024/01/27 21:59:38 by tmimault         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 # include "push_swap.h"
 
-void	apply_rules(t_list **list_a, t_list **list_b)
+void	apply_rules(t_list **list_a, t_list **list_b, int nb_argu)
 {
-	print_list(*list_a);
+	if (nb_argu == 3)
+		sort_3(list_a, list_b);
+	if (nb_argu == 2)
+		sort_2(list_a,list_b);
+	if (if_croissant(*list_a))
 	print_list(*list_a);
 	free_list(*list_b);
 	free_list(*list_a);
@@ -89,3 +93,4 @@ void	push_ty(char type, t_list **list_a, t_list **list_b)
 		printf("pb\n");//ATTENTION VRAI PRINTF
 	}
 }
+

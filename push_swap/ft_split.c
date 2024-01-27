@@ -6,7 +6,7 @@
 /*   By: tmimault <tmimault@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/11/13 22:25:45 by tmimault          #+#    #+#             */
-/*   Updated: 2024/01/17 15:56:45 by tmimault         ###   ########.fr       */
+/*   Updated: 2024/01/26 16:32:26 by tmimault         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ static size_t	lengt_word(char const *s, char c, size_t i)
 	return (count);
 }
 
-static char	**freeall(char **big_array, size_t ind_array)
+char	**freeall(char **big_array, size_t ind_array)
 {
 	while (ind_array > 0)
 	{

@@ -6,7 +6,7 @@
 /*   By: tmimault <tmimault@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/08 23:38:18 by tmimault          #+#    #+#             */
-/*   Updated: 2024/01/17 19:07:29 by tmimault         ###   ########.fr       */
+/*   Updated: 2024/01/26 16:44:19 by tmimault         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ int	main(int argc, char **argv)
 	while (i < argc)
 		add_list(list_a,int_list[i++]);
 	free(int_list);
-	apply_rules(&list_a, &list_b);
+	apply_rules(&list_a, &list_b, argc);
 	}
 
 t_list	*init_list(int elem_int)

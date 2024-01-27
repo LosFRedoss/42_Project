@@ -6,7 +6,7 @@
 /*   By: tmimault <tmimault@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/16 20:32:03 by tmimault          #+#    #+#             */
-/*   Updated: 2024/01/17 12:09:23 by tmimault         ###   ########.fr       */
+/*   Updated: 2024/01/27 21:04:29 by tmimault         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ void rotate(t_list *list)
 			point_elem->content = point_sec_elem->content;
 		}
 		point_sec_elem->content = int_temp;
-	}
+	};
 }
 
 void rev_rotate(t_list *list)

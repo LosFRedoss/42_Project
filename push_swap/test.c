@@ -6,7 +6,7 @@
 /*   By: tmimault <tmimault@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/01/11 10:28:28 by tmimault          #+#    #+#             */
-/*   Updated: 2024/01/17 19:25:31 by tmimault         ###   ########.fr       */
+/*   Updated: 2024/01/26 16:38:24 by tmimault         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,16 +25,18 @@ int	*tester(int *nb_values, char **values)
 	if (*nb_values <= 1)
 		return (NULL);
 	values = use_split(nb_values, values);
+	if (!values)
+		return (printf("Error\n"), NULL);
 	while(i < *nb_values)
 	{
 		if(test_val(values[i]) == -1)
-			return(printf("Error\n"), free(tab_values), NULL); //ATTENTION VRAI PRINTF
+			return(printf("Error\n"), free(tab_values), freeall(values,*nb_values), NULL); //ATTENTION VRAI PRINTF
 		tab_values = test_double_val(tab_values, values[i], i + 1);
 		if(!tab_values)
-			return(printf("Error\n"), free(tab_values), NULL);//ATTENTION VRAI PRINTF
+			return(printf("Error\n"), free(tab_values), freeall(values,*nb_values), NULL);//ATTENTION VRAI PRINTF
 		i++;
 	}
-	return(tab_values);
+	return(freeall(values,*nb_values), tab_values);
 }
 
 int	test_val(char *value)
@@ -110,14 +112,14 @@ char **add_value(char **prev_tab_values, char **split_values,int *nb_value)
 	i = -1;
 	nb_of_prev_tab = 0;
 	if(!split_values)
-		return (free(prev_tab_values), NULL);
+		return (free(prev_tab_values),free(split_values), NULL);
 	while (split_values[nb_of_split])
 		nb_of_split++;
 	if(prev_tab_values)
 		nb_of_prev_tab = *nb_value;
 	new_tab_val = malloc (sizeof(char *) * (nb_of_split + nb_of_prev_tab + 1));
 	if (!new_tab_val)
-		return (free(prev_tab_values), NULL);
+		return (free(prev_tab_values),free(split_values), NULL);
 	while (++i < nb_of_prev_tab)
 			new_tab_val[i] = prev_tab_values[i];
 	i = -1;
@@ -125,7 +127,7 @@ char **add_value(char **prev_tab_values, char **split_values,int *nb_value)
 		new_tab_val[i + nb_of_prev_tab] = split_values[i];
 	new_tab_val[nb_of_split + nb_of_prev_tab] = NULL;
 	*nb_value = nb_of_split + nb_of_prev_tab;
-	return (free (prev_tab_values), new_tab_val);
+	return (free (prev_tab_values),free(split_values), new_tab_val);
 }
 
 
