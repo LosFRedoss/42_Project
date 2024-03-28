@@ -6,7 +6,7 @@
 /*   By: tmimault <tmimault@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/05 15:29:32 by tmimault          #+#    #+#             */
-/*   Updated: 2024/03/19 16:23:59 by tmimault         ###   ########.fr       */
+/*   Updated: 2024/03/28 21:03:51 by tmimault         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,32 +20,39 @@ void	my_mlx_put_pxl(t_data *data, int x, int y, int color)
 	*(unsigned int*)dst = color;
 }
 
-t_all_mlx *my_mlx_set(char *wind_name, int width, int height)
+t_all_mlx *my_mlx_set(char *wind_name, t_size_wind *wind_size, t_cmplx_nb *cmplx_c)
 {
 	t_all_mlx	*all_mlx;
-	t_data		*point_img;
 
 	all_mlx = calloc(1, sizeof(*all_mlx));
 	if (!all_mlx)
 		return ((void *)0);
-	point_img = calloc(1, sizeof(*point_img));
-	if (!point_img)
-		return ((void *)0);
 	all_mlx->mlx = mlx_init();
-	all_mlx->mlx_wind = mlx_new_window(all_mlx->mlx, width, height, wind_name);
-	point_img->img = mlx_new_image(all_mlx->mlx, width, height);
-	point_img->addr = mlx_get_data_addr(point_img->img, &point_img->bits_per_pixel, &point_img->line_length, &point_img->endian);
-	all_mlx->mlx_img = point_img;
+	all_mlx->wind_hei = wind_size->height;
+	all_mlx->wind_wid = wind_size->width;
+	all_mlx->cmplx_C = cmplx_c;
+	all_mlx->mlx_wind = mlx_new_window(all_mlx->mlx, wind_size->width,
+		 wind_size->height, wind_name);
+	all_mlx->mlx_img = my_mlx_img_set(all_mlx);
+	free(wind_size);
+	if (!all_mlx->mlx_img)
+		return ((void *)0);
 	return (all_mlx);
 }
-int	free_all_mlx(t_all_mlx * all_mlx)
+
+t_data *my_mlx_img_set( t_all_mlx *all_mlx)
 {
-	free(all_mlx->mlx_img->addr);
-	free(all_mlx->mlx_img->img);
-	free(all_mlx->mlx_wind);
-	free(all_mlx->mlx);
-	free(all_mlx);
-	return (1);
+	t_data	*point_img;
+
+	point_img = calloc(1, sizeof(*point_img));
+	if (!point_img)
+	return ((void *)0);
+	point_img->img = mlx_new_image(all_mlx->mlx, all_mlx->wind_wid,
+		 all_mlx->wind_hei);
+	point_img->addr = mlx_get_data_addr(point_img->img,
+			&point_img->bits_per_pixel, &point_img->line_length,
+			&point_img->endian);
+	return (point_img);
 }
 
 /*

@@ -6,7 +6,7 @@
 #    By: tmimault <tmimault@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2023/11/09 16:42:18 by tmimault          #+#    #+#              #
-#    Updated: 2024/02/13 20:06:45 by tmimault         ###   ########.fr        #
+#    Updated: 2024/03/28 17:31:37 by tmimault         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -28,6 +28,7 @@ SRC =	ft_putnbr_fd.c\
 		ft_strjoin.c\
 		ft_substr.c\
 		ft_atoi.c\
+		ft_atof.c\
 		ft_bzero.c\
 		ft_calloc.c\
 		ft_isalnum.c\

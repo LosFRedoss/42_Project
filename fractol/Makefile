@@ -6,7 +6,7 @@
 #    By: tmimault <tmimault@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/03/04 16:14:22 by tmimault          #+#    #+#              #
-#    Updated: 2024/03/20 19:52:16 by tmimault         ###   ########.fr        #
+#    Updated: 2024/03/28 17:35:01 by tmimault         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -25,7 +25,6 @@ MLIBX = ./mlx_linux/libmlx_Linux.a ./mlx_linux/libmlx.a
 LIBFT = ./libft/libft.a
 
 SRC =	first_step.c\
-		ft_atof.c\
 		nb_cmplx_set.c\
 		start_fract.c\
 		mlx_basics.c\

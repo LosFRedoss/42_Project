@@ -6,7 +6,7 @@
 /*   By: tmimault <tmimault@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/07 16:51:26 by tmimault          #+#    #+#             */
-/*   Updated: 2024/03/20 20:28:13 by tmimault         ###   ########.fr       */
+/*   Updated: 2024/03/28 23:53:39 by tmimault         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -92,8 +92,6 @@ t_cmplx_nb	*dbl_to_cmplx(double int_real_nb, double int_img_nb, int unit)
 		return ((void *) 0);
 	(*fnl_cmplx_nb).nb_i = d_img_nb;
 	(*fnl_cmplx_nb).nb_r = d_real_nb;
-	/*print_nb_cmplx(fnl_cmplx_nb);
-	printf("i\n");*/
 	return (fnl_cmplx_nb); 
 }
 
