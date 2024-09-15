@@ -6,7 +6,7 @@
 /*   By: tmimault <tmimault@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/04 17:35:19 by tmimault          #+#    #+#             */
-/*   Updated: 2024/08/29 23:43:56 by tmimault         ###   ########.fr       */
+/*   Updated: 2024/09/15 05:48:05 by tmimault         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,10 +14,10 @@
 
 static long int	signtest(const char *nptr, int *y);
 
-unsigned int	ft_atoi(const char *nptr)
+long int	ft_atolong(const char *nptr)
 {
-	unsigned long int	nbfinal;
-	unsigned long int	nbtemp;
+	long int	nbfinal;
+	long int	nbtemp;
 	long int			i;
 	int					y;
 
@@ -63,7 +63,7 @@ size_t ms_time(t_philo *philo)
 	if (gettimeofday(&current_time, NULL) == -1)
 		write(2,"Error gettime\n", 15);
 	ms_time = current_time.tv_sec * 1000 + current_time.tv_usec / 1000;
-	if(philo)
+	if (philo)
 		ms_time -= philo->start_time;
 	return (ms_time);
 }
@@ -74,5 +74,5 @@ void ft_usleep(size_t milliseconds)
 
 	start = ms_time(NULL);
 	while ((ms_time(NULL) - start) < milliseconds)
-		usleep(50);
+		usleep(5);
 }

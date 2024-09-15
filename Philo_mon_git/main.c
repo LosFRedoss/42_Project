@@ -6,7 +6,7 @@
 /*   By: tmimault <tmimault@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/04 17:11:40 by tmimault          #+#    #+#             */
-/*   Updated: 2024/08/30 02:02:15 by tmimault         ###   ########.fr       */
+/*   Updated: 2024/09/15 05:30:07 by tmimault         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,16 +80,33 @@ int set_dead_philo(t_table *table)
 	return (0);
 }
 
+size_t count_all_meal(t_table *table)
+{
+	size_t i_ph;
+	size_t all_meal;
+
+	i_ph = 0;
+	all_meal = 0;
+	while (i_ph < table->rules.nb_philo)
+	{
+		pthread_mutex_lock(&table->mtx_meal);
+		all_meal += table->philo[i_ph].nb_meal;
+		pthread_mutex_unlock(&table->mtx_meal);
+		i_ph++;
+	}
+	return (all_meal / table->rules.nb_philo);
+}
+
 int all_eat(t_table *table)
 {
-	int i;
-
-	i = 0;
 	if (table->rules.nb_philo_eat == -1)
 		return (0);
-	else
-		return (-1);
-	
+	else if (count_all_meal(table) == (size_t) table->rules.nb_philo_eat)
+	{
+		mtx_print(&table->philo[0], "eat everything");
+		return (1);
+	}
+	return (0);
 }
 int too_late(t_table *table)
 {
@@ -100,10 +117,10 @@ int too_late(t_table *table)
 	while (i < table->rules.nb_philo)
 	{
 		pthread_mutex_lock(&table->mtx_meal);
-		if (ms_time(NULL) - table->philo[i].lst_eat >= table->rules.msec_die)
+		if (ms_time(NULL) - table->philo[i].lst_eat > table->rules.msec_die)
 		{
-			mtx_print(&table->philo[i], "is dead");
 			pthread_mutex_unlock(&table->mtx_meal);
+			mtx_print(&table->philo[i], "is dead");
 			return (1);
 		}
 		pthread_mutex_unlock(&table->mtx_meal);
@@ -119,7 +136,7 @@ void *watch_all(void *v_table)
 	table = (t_table *) v_table;
 	while (1)
 	{
-		if (too_late(table) || all_eat(table) == 1)
+		if (too_late(table) || all_eat(table))
 		{
 			set_dead_philo(table);
 			return (NULL);
@@ -154,7 +171,6 @@ void *start_philo(void *v_table)
 	while (++i < table->rules.nb_philo)
 		pthread_join(table->philo[i].th_philo, NULL);
 	pthread_join(table->start_watch, NULL);
-//	pthread_mutex_unlock(&table->mtx_start);
 	return (NULL);
 }
 
@@ -165,12 +181,19 @@ int main (int argc, char **argv)
 	if (test_argv(argc, argv, &table.rules))
 		return (1);
 	table.all_fork = malloc (sizeof(*table.all_fork) * table.rules.nb_philo);
+	if (!table.all_fork)
+		return (1);
 	set_all_forks(&table);
 	table.is_death = -1;
-	table.philo = malloc (sizeof(*table.philo) * table.rules.nb_philo + 1);
-	if (!table.all_fork || !table.philo)
+	table.philo = malloc (sizeof(*table.philo) * table.rules.nb_philo);
+	if (!table.philo)
+	{
+		free(table.all_fork);
 		return (1);
+	}
 	start_philo(&table);
+	free(table.all_fork);
+	free(table.philo);
 /*if (pthread_create(&table.start, NULL, start_philo, &table))
 		return (1);
 	pthread_join(table.start, NULL);*/

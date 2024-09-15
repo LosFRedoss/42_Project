@@ -6,7 +6,7 @@
 /*   By: tmimault <tmimault@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/04 17:20:06 by tmimault          #+#    #+#             */
-/*   Updated: 2024/08/30 01:16:05 by tmimault         ###   ########.fr       */
+/*   Updated: 2024/09/15 05:20:21 by tmimault         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,20 +69,21 @@ typedef struct	s_table
 
 
 int				test_argv(int argc, char **argv, t_rules *rules);
-unsigned int	ft_atoi(const char *nptr);
-unsigned long ms_time(t_philo *philo);
-void	philo_think(t_philo *philo);
-void	philo_sleep(t_philo *philo);
-void	philo_eat(t_philo *philo);
-void	grab_fork(t_philo *philo);
-int		mtx_print(t_philo *philo, char *str);
-int		mtx_bool( bool *is_use, pthread_mutex_t *mtx);
-int		mtx_check(bool *is_use, pthread_mutex_t *mtx, bool is_test);
-void	*start_philo(void *v_table);
-int		mtx_check_fork(t_philo *philo);
-void	mtx_let_fork(t_philo *philo);
-void	*routine_philo(void *v_philo);
-void	ft_usleep(size_t milliseconds);
+long int		ft_atolong(const char *nptr);
+unsigned long	ms_time(t_philo *philo);
+void		philo_think(t_philo *philo);
+void		philo_sleep(t_philo *philo);
+void		philo_eat(t_philo *philo);
+void		grab_fork(t_philo *philo);
+int			mtx_print(t_philo *philo, char *str);
+int			mtx_bool( bool *is_use, pthread_mutex_t *mtx);
+int			mtx_check(bool *is_use, pthread_mutex_t *mtx, bool is_test);
+void		*start_philo(void *v_table);
+int			mtx_check_fork(t_philo *philo);
+void		mtx_let_fork(t_philo *philo);
+void		*routine_philo(void *v_philo);
+void		ft_usleep(size_t milliseconds);
+int			is_dead(t_philo *philo);
 
 
 #endif
