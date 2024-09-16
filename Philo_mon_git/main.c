@@ -6,7 +6,7 @@
 /*   By: tmimault <tmimault@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/04 17:11:40 by tmimault          #+#    #+#             */
-/*   Updated: 2024/09/15 05:30:07 by tmimault         ###   ########.fr       */
+/*   Updated: 2024/09/16 19:55:59 by tmimault         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,7 @@ int set_all_forks(t_table *table)
 	while (i < table->rules.nb_philo)
 	{
 		pthread_mutex_init(&table->all_fork[i].mtx, NULL);
+		table->all_fork[i].fork = 0;
 		i++;
 	}
 	return (0);
@@ -46,109 +47,21 @@ void set_philo(t_table *table)
 	i = 0;
 	pthread_mutex_init(&table->mtx_meal, NULL);
 	pthread_mutex_init(&table->mtx_death, NULL);
+	pthread_mutex_init(&table->mtx_start, NULL);
 	while (i < table->rules.nb_philo)
 	{
 		table->philo[i].index = i + 1;
 		table->philo[i].start_time = ms_time(NULL);
 		table->philo[i].lst_eat = table->philo[i].start_time;
 		set_side_fork(table, &table->philo[i]);
-		table->philo[i].rules = &table->rules;
+		table->philo[i].rule = &table->rules;
 		table->philo[i].death = &table->is_death;
 		table->philo[i].ptr_mtx_death = &table->mtx_death;
 		table->philo[i].ptr_mtx_meal = &table->mtx_meal;
+		table->philo[i].ptr_mtx_start = &table->mtx_start;
 		i++;
 	}
 }
-/*
- Role du watcher, 
-
-regarder si des philo on depacer leurs temps de repas,
-	pour chacun des philos tcheck si lst_time_eat - actuel time < time_limite_eat
-		sinon MORT
-
-reagrder si ils ont atteint le nombre de repas,
-	si tout les philos->
-	
-si oui alors mettre la valeur 1 a dead
-*/
-
-int set_dead_philo(t_table *table)
-{
-	pthread_mutex_lock(&table->mtx_death);
-	table->is_death = 1;
-	pthread_mutex_unlock(&table->mtx_death);
-	return (0);
-}
-
-size_t count_all_meal(t_table *table)
-{
-	size_t i_ph;
-	size_t all_meal;
-
-	i_ph = 0;
-	all_meal = 0;
-	while (i_ph < table->rules.nb_philo)
-	{
-		pthread_mutex_lock(&table->mtx_meal);
-		all_meal += table->philo[i_ph].nb_meal;
-		pthread_mutex_unlock(&table->mtx_meal);
-		i_ph++;
-	}
-	return (all_meal / table->rules.nb_philo);
-}
-
-int all_eat(t_table *table)
-{
-	if (table->rules.nb_philo_eat == -1)
-		return (0);
-	else if (count_all_meal(table) == (size_t) table->rules.nb_philo_eat)
-	{
-		mtx_print(&table->philo[0], "eat everything");
-		return (1);
-	}
-	return (0);
-}
-int too_late(t_table *table)
-{
-	size_t i;
-
-	i = 0;
-//	printf("%zu\n\n\n",table->rules.nb_philo);
-	while (i < table->rules.nb_philo)
-	{
-		pthread_mutex_lock(&table->mtx_meal);
-		if (ms_time(NULL) - table->philo[i].lst_eat > table->rules.msec_die)
-		{
-			pthread_mutex_unlock(&table->mtx_meal);
-			mtx_print(&table->philo[i], "is dead");
-			return (1);
-		}
-		pthread_mutex_unlock(&table->mtx_meal);
-		i++;
-	}
-	return (0);
-}
-
-void *watch_all(void *v_table)
-{
-	t_table *table;
-
-	table = (t_table *) v_table;
-	while (1)
-	{
-		if (too_late(table) || all_eat(table))
-		{
-			set_dead_philo(table);
-			return (NULL);
-		}
-	}
-}
-
-
-
-
-
-
 
 void *start_philo(void *v_table)
 {
@@ -157,16 +70,17 @@ void *start_philo(void *v_table)
 
 	table = v_table;
 	i = 0;
-//	pthread_mutex_init(&table->mtx_start, NULL);
-//	pthread_mutex_lock(&table->mtx_start);
 	set_philo(table);
 	if (pthread_create(&table->start_watch, NULL, watch_all, table))
 		write(2, " error thread", 14);
+	pthread_mutex_lock(&table->mtx_start);
 	while (i < table->rules.nb_philo)
 	{
+		
 		pthread_create(&table->philo[i].th_philo, NULL, routine_philo, &table->philo[i]);
 		i++;
 	}
+	pthread_mutex_unlock(&table->mtx_start);
 	i = -1;
 	while (++i < table->rules.nb_philo)
 		pthread_join(table->philo[i].th_philo, NULL);

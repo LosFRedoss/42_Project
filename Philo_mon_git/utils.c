@@ -6,7 +6,7 @@
 /*   By: tmimault <tmimault@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/04 17:35:19 by tmimault          #+#    #+#             */
-/*   Updated: 2024/09/15 05:48:05 by tmimault         ###   ########.fr       */
+/*   Updated: 2024/09/16 18:36:41 by tmimault         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,5 +74,5 @@ void ft_usleep(size_t milliseconds)
 
 	start = ms_time(NULL);
 	while ((ms_time(NULL) - start) < milliseconds)
-		usleep(5);
+		usleep(1);
 }

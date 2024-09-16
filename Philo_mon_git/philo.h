@@ -6,7 +6,7 @@
 /*   By: tmimault <tmimault@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/04 17:20:06 by tmimault          #+#    #+#             */
-/*   Updated: 2024/09/15 05:20:21 by tmimault         ###   ########.fr       */
+/*   Updated: 2024/09/16 19:56:47 by tmimault         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ typedef struct	s_rules
 typedef struct	s_fork
 {
 	pthread_mutex_t	mtx;
+	int				fork;
 }				t_fork;
 
 typedef struct	s_philo
@@ -42,6 +43,7 @@ typedef struct	s_philo
 	pthread_t		th_philo;
 	pthread_mutex_t	*ptr_mtx_meal;
 	pthread_mutex_t	*ptr_mtx_death;
+	pthread_mutex_t	*ptr_mtx_start;
 	size_t			index;
 	size_t			start_time;
 	size_t			lst_eat;
@@ -50,13 +52,12 @@ typedef struct	s_philo
 	int				*death;
 	struct s_fork	*fork_left;
 	struct s_fork	*fork_right;
-	struct s_rules	*rules;
+	struct s_rules	*rule;
 }				t_philo;
 
 typedef struct	s_table
 {
-	pthread_t		start;
-	pthread_t		start_watch;
+	pthread_t	start_watch;
 	pthread_mutex_t	mtx_start;
 	pthread_mutex_t	mtx_meal;
 	pthread_mutex_t	mtx_death;
@@ -70,7 +71,7 @@ typedef struct	s_table
 
 int				test_argv(int argc, char **argv, t_rules *rules);
 long int		ft_atolong(const char *nptr);
-unsigned long	ms_time(t_philo *philo);
+size_t	ms_time(t_philo *philo);
 void		philo_think(t_philo *philo);
 void		philo_sleep(t_philo *philo);
 void		philo_eat(t_philo *philo);
@@ -84,6 +85,7 @@ void		mtx_let_fork(t_philo *philo);
 void		*routine_philo(void *v_philo);
 void		ft_usleep(size_t milliseconds);
 int			is_dead(t_philo *philo);
+void		*watch_all(void *v_table);
 
 
 #endif
