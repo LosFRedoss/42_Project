@@ -6,7 +6,7 @@
 /*   By: tmimault <tmimault@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/04 17:11:40 by tmimault          #+#    #+#             */
-/*   Updated: 2024/09/16 19:55:59 by tmimault         ###   ########.fr       */
+/*   Updated: 2024/09/17 20:18:58 by tmimault         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -51,14 +51,14 @@ void set_philo(t_table *table)
 	while (i < table->rules.nb_philo)
 	{
 		table->philo[i].index = i + 1;
-		table->philo[i].start_time = ms_time(NULL);
-		table->philo[i].lst_eat = table->philo[i].start_time;
 		set_side_fork(table, &table->philo[i]);
 		table->philo[i].rule = &table->rules;
 		table->philo[i].death = &table->is_death;
 		table->philo[i].ptr_mtx_death = &table->mtx_death;
 		table->philo[i].ptr_mtx_meal = &table->mtx_meal;
 		table->philo[i].ptr_mtx_start = &table->mtx_start;
+		table->philo[i].start_time = ms_time(NULL);
+		table->philo[i].lst_eat = table->philo[i].start_time;
 		i++;
 	}
 }
@@ -72,11 +72,13 @@ void *start_philo(void *v_table)
 	i = 0;
 	set_philo(table);
 	if (pthread_create(&table->start_watch, NULL, watch_all, table))
+	{
 		write(2, " error thread", 14);
+		//free_all()
+	}
 	pthread_mutex_lock(&table->mtx_start);
 	while (i < table->rules.nb_philo)
 	{
-		
 		pthread_create(&table->philo[i].th_philo, NULL, routine_philo, &table->philo[i]);
 		i++;
 	}

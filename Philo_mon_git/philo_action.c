@@ -6,7 +6,7 @@
 /*   By: tmimault <tmimault@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 16:11:34 by tmimault          #+#    #+#             */
-/*   Updated: 2024/09/16 20:06:01 by tmimault         ###   ########.fr       */
+/*   Updated: 2024/09/17 20:42:42 by tmimault         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,13 @@ void let_fork(t_fork *fork)
 
 int	is_dead(t_philo *philo)
 {
-	pthread_mutex_lock(philo->ptr_mtx_death);
+//	pthread_mutex_lock(philo->ptr_mtx_death);
 	if (*philo->death == 1)
 	{
-		pthread_mutex_unlock(philo->ptr_mtx_death);
+//		pthread_mutex_unlock(philo->ptr_mtx_death);
 		return (0);
 	}
-	pthread_mutex_unlock(philo->ptr_mtx_death);
+//	pthread_mutex_unlock(philo->ptr_mtx_death);
 	return (1);
 }
 
@@ -47,14 +47,14 @@ void philo_sleep(t_philo *philo)
 		ft_usleep(philo->rule->msec_sleep);
 }
 
-void even_eat(t_philo *philo)
+void philo_eat(t_philo *philo)
 {
 		take_fork(philo, philo->fork_right);
 		take_fork(philo, philo->fork_left);
 		mtx_print(philo, "is eating");
 		pthread_mutex_lock(philo->ptr_mtx_meal);
-		philo->lst_eat = ms_time(NULL);
 		philo->nb_meal += 1;
+		philo->lst_eat = ms_time(NULL);
 		pthread_mutex_unlock(philo->ptr_mtx_meal);
 		ft_usleep(philo->rule->msec_eat);
 		let_fork(philo->fork_right);
@@ -67,13 +67,14 @@ void odd_eat(t_philo *philo)
 		take_fork(philo, philo->fork_right);
 		mtx_print(philo, "is eating");
 		pthread_mutex_lock(philo->ptr_mtx_meal);
-		philo->lst_eat = ms_time(NULL);
 		philo->nb_meal += 1;
+		philo->lst_eat = ms_time(NULL);
 		pthread_mutex_unlock(philo->ptr_mtx_meal);
 		ft_usleep(philo->rule->msec_eat);
 		let_fork(philo->fork_left);
 		let_fork(philo->fork_right);
 }
+
 
 void *routine_philo(void *v_philo)
 {
@@ -82,11 +83,14 @@ void *routine_philo(void *v_philo)
 	philo =(t_philo *) v_philo;
 	pthread_mutex_lock(philo->ptr_mtx_start);
 	pthread_mutex_unlock(philo->ptr_mtx_start);
-	if (philo->index % 2)
+	if (philo->index % 2 == 0)
 		ft_usleep(philo->rule->msec_eat / 2);
 	while (is_dead(philo)) // tant que personne n'est mort ou que le nombre de repas total est atteint,
 	{
-		even_eat(philo);
+		if (philo->index)
+			odd_eat(philo);
+		else 
+			philo_eat(philo);
 		philo_sleep(philo);
 		philo_think(philo);
 	}
