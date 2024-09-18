@@ -6,7 +6,7 @@
 /*   By: tmimault <tmimault@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/22 16:11:34 by tmimault          #+#    #+#             */
-/*   Updated: 2024/09/17 20:42:42 by tmimault         ###   ########.fr       */
+/*   Updated: 2024/09/18 18:06:43 by tmimault         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,30 +15,32 @@
 void take_fork(t_philo *philo, t_fork *fork)
 {
 	pthread_mutex_lock(&fork->mtx);
-	mtx_print(philo, "has taken a fork");
+	while (fork->fork)
+	{
+		pthread_mutex_unlock(&fork->mtx);
+		pthread_mutex_lock(&fork->mtx);
+	}
 	fork->fork = 1;
+	pthread_mutex_unlock(&fork->mtx);
+	mtx_print(philo, "has taken a fork");
 }
 void let_fork(t_fork *fork)
 {
+	pthread_mutex_lock(&fork->mtx);
 	fork->fork = 0;
 	pthread_mutex_unlock(&fork->mtx);
 }
 
 int	is_dead(t_philo *philo)
 {
-//	pthread_mutex_lock(philo->ptr_mtx_death);
+	pthread_mutex_lock(philo->ptr_mtx_death);
 	if (*philo->death == 1)
 	{
-//		pthread_mutex_unlock(philo->ptr_mtx_death);
+		pthread_mutex_unlock(philo->ptr_mtx_death);
 		return (0);
 	}
-//	pthread_mutex_unlock(philo->ptr_mtx_death);
+	pthread_mutex_unlock(philo->ptr_mtx_death);
 	return (1);
-}
-
-void philo_think(t_philo *philo)
-{
-		mtx_print(philo, "is thinking");
 }
 
 void philo_sleep(t_philo *philo)
@@ -46,6 +48,12 @@ void philo_sleep(t_philo *philo)
 		mtx_print(philo, "is sleeping");
 		ft_usleep(philo->rule->msec_sleep);
 }
+
+void philo_think(t_philo *philo)
+{
+		mtx_print(philo, "is thinking");
+}
+
 
 void philo_eat(t_philo *philo)
 {
@@ -84,13 +92,10 @@ void *routine_philo(void *v_philo)
 	pthread_mutex_lock(philo->ptr_mtx_start);
 	pthread_mutex_unlock(philo->ptr_mtx_start);
 	if (philo->index % 2 == 0)
-		ft_usleep(philo->rule->msec_eat / 2);
+		ft_usleep(philo->rule->msec_eat - 10);
 	while (is_dead(philo)) // tant que personne n'est mort ou que le nombre de repas total est atteint,
 	{
-		if (philo->index)
-			odd_eat(philo);
-		else 
-			philo_eat(philo);
+		philo_eat(philo);
 		philo_sleep(philo);
 		philo_think(philo);
 	}
