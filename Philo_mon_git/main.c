@@ -6,27 +6,13 @@
 /*   By: tmimault <tmimault@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/04 17:11:40 by tmimault          #+#    #+#             */
-/*   Updated: 2024/09/17 20:18:58 by tmimault         ###   ########.fr       */
+/*   Updated: 2024/09/19 13:24:50 by tmimault         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "philo.h"
 
-int set_all_forks(t_table *table)
-{
-	size_t i;
-
-	i = 0;
-	while (i < table->rules.nb_philo)
-	{
-		pthread_mutex_init(&table->all_fork[i].mtx, NULL);
-		table->all_fork[i].fork = 0;
-		i++;
-	}
-	return (0);
-}
-
-void set_side_fork(t_table *table, t_philo *philo)
+void	set_side_fork(t_table *table, t_philo *philo)
 {
 	if (philo->index == 1)
 	{
@@ -40,7 +26,7 @@ void set_side_fork(t_table *table, t_philo *philo)
 	}
 }
 
-void set_philo(t_table *table)
+void	set_philo(t_table *table)
 {
 	size_t	i;
 
@@ -63,23 +49,25 @@ void set_philo(t_table *table)
 	}
 }
 
-void *start_philo(void *v_table)
+int	start_philo(void *v_table)
 {
-	size_t i;
-	t_table *table;
+	size_t	i;
+	t_table	*table;
 
 	table = v_table;
 	i = 0;
 	set_philo(table);
 	if (pthread_create(&table->start_watch, NULL, watch_all, table))
-	{
-		write(2, " error thread", 14);
-		//free_all()
-	}
+		return (free_all(table, -1));
 	pthread_mutex_lock(&table->mtx_start);
 	while (i < table->rules.nb_philo)
 	{
-		pthread_create(&table->philo[i].th_philo, NULL, routine_philo, &table->philo[i]);
+		if (pthread_create(&table->philo[i].th_philo, NULL,
+				routine_philo, &table->philo[i]))
+		{
+			pthread_mutex_unlock(&table->mtx_start);
+			return (free_all(table, i));
+		}
 		i++;
 	}
 	pthread_mutex_unlock(&table->mtx_start);
@@ -87,10 +75,10 @@ void *start_philo(void *v_table)
 	while (++i < table->rules.nb_philo)
 		pthread_join(table->philo[i].th_philo, NULL);
 	pthread_join(table->start_watch, NULL);
-	return (NULL);
+	return (0);
 }
 
-int main (int argc, char **argv)
+int	main(int argc, char **argv)
 {
 	t_table	table;
 
@@ -107,12 +95,10 @@ int main (int argc, char **argv)
 		free(table.all_fork);
 		return (1);
 	}
-	start_philo(&table);
+	if (start_philo(&table))
+		return (1);
 	free(table.all_fork);
 	free(table.philo);
-/*if (pthread_create(&table.start, NULL, start_philo, &table))
-		return (1);
-	pthread_join(table.start, NULL);*/
 	return (0);
 }
 

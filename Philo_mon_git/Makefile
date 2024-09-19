@@ -6,7 +6,7 @@
 #    By: tmimault <tmimault@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/04/10 19:12:45 by tmimault          #+#    #+#              #
-#    Updated: 2024/09/18 18:09:31 by tmimault         ###   ########.fr        #
+#    Updated: 2024/09/19 14:29:36 by tmimault         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,15 +14,14 @@ NAME = philo
 
 BUILD = .build/
 
-CCFlags= -Wall -Wextra -Werror -fsanitize=thread
-
+CCFlags= -Wall -Wextra -Werror
 LIB = philo.h
 
 SRC =	main.c\
 		parsing.c\
 		philo_action.c\
-		mutex_utils.c\
 		watcher.c\
+		fork.c\
 		utils.c
 
 OBJ = $(SRC:%.c=$(BUILD)%.o)
